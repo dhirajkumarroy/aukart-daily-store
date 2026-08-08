@@ -1,0 +1,72 @@
+[
+  {
+    "slug": "nilkar-study-table",
+    "title": "Nilkamal Premium Foldable Study Table & Laptop Desk",
+    "image": "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&auto=format&fit=crop&q=80",
+    "price": "₹449",
+    "originalPrice": "₹899",
+    "discount": "50% off",
+    "category": "furniture",
+    "affiliateLink": "https://www.amazon.in/dp/B08GP8H6Z7",
+    "rating": 4.1,
+    "reviewCount": 278,
+    "description": "A premium, sturdy, and durable foldable desk perfect for study sessions, working on your laptop, or dining in bed. Features a lightweight design with sturdy metal legs and a smooth high-quality wood finish that fits any interior design style.",
+    "featured": true
+  },
+  {
+    "slug": "noise-colorfit-smartwatch",
+    "title": "Noise ColorFit Pulse Grand Smartwatch with 1.69\" Display",
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80",
+    "price": "₹1,499",
+    "originalPrice": "₹3,999",
+    "discount": "63% off",
+    "category": "electronics",
+    "affiliateLink": "https://www.amazon.in/dp/B09NV9K2Z3",
+    "rating": 4.3,
+    "reviewCount": 1420,
+    "description": "Track your fitness metrics, read notifications on-the-go, and customize your watch face daily with this premium, sleek smartwatch. Offers 60 sports modes, heart rate monitoring, sleep tracking, and up to 7 days of long-lasting battery life on a single charge.",
+    "featured": true
+  },
+  {
+    "slug": "ergo-office-chair",
+    "title": "Ergonomic High Back Mesh Office Chair with Lumbar Support",
+    "image": "https://images.unsplash.com/photo-1505797149-43b0069ec26b?w=800&auto=format&fit=crop&q=80",
+    "price": "₹4,999",
+    "originalPrice": "₹9,999",
+    "discount": "50% off",
+    "category": "furniture",
+    "affiliateLink": "https://www.amazon.in/dp/B08V5FS5B5",
+    "rating": 4.5,
+    "reviewCount": 512,
+    "description": "Upgrade your remote work setup with this ergonomic office chair. Engineered with breathable double-mesh backing, an adjustable lumbar support system, synchro-tilt mechanism, and heavy-duty 3D armrests to keep you productive and comfortable all day.",
+    "featured": true
+  },
+  {
+    "slug": "jbl-tune-headphones",
+    "title": "JBL Tune 760NC Wireless Over-Ear Active Noise Cancelling Headphones",
+    "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80",
+    "price": "₹4,799",
+    "originalPrice": "₹7,999",
+    "discount": "40% off",
+    "category": "electronics",
+    "affiliateLink": "https://www.amazon.in/dp/B095MS8S4D",
+    "rating": 4.4,
+    "reviewCount": 982,
+    "description": "Experience legendary JBL Pure Bass Sound with advanced Active Noise Cancellation to block out external distractions. Features lightweight, foldable design with up to 35 hours of wireless battery backup (50 hours with ANC off) and hands-free calling support.",
+    "featured": false
+  },
+  {
+    "slug": "solimo-resistance-bands",
+    "title": "Solimo Premium Latex Resistance Band Set for Workout",
+    "image": "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=800&auto=format&fit=crop&q=80",
+    "price": "₹599",
+    "originalPrice": "₹1,199",
+    "discount": "50% off",
+    "category": "fitness",
+    "affiliateLink": "https://www.amazon.in/dp/B08C75L2DF",
+    "rating": 4.2,
+    "reviewCount": 315,
+    "description": "A versatile set of 5 color-coded resistance bands ranging from extra light to extra heavy. Made from 100% natural, premium latex to ensure durability, flexibility, and safety. Ideal for strength training, physical therapy, yoga, and home fitness workouts.",
+    "featured": true
+  }
+]

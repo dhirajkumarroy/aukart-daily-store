@@ -1,0 +1,60 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  slug          String   @unique
+  title         String
+  description   String?  @db.Text
+  imageUrl      String   @map("image_url")
+  price         String
+  originalPrice String?  @map("original_price")
+  discount      String?
+  category      String
+  subcategory   String?  @map("subcategory")
+  affiliateLink String   @map("affiliate_link")
+  rating        Float?
+  reviewCount   Int?     @map("review_count")
+  featured      Boolean  @default(false)
+  clickCount    Int      @default(0) @map("click_count")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  clicks        Click[]
+
+  @@map("products")
+}
+
+model Click {
+  id        String   @id @default(uuid())
+  productId String   @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  clickedAt DateTime @default(now()) @map("clicked_at")
+  referrer  String?
+  userAgent String?  @map("user_agent")
+
+  @@map("clicks")
+}
+
+model CategoryList {
+  id            String            @id @default(uuid())
+  name          String            @unique
+  subcategories SubcategoryList[]
+
+  @@map("category_list")
+}
+
+model SubcategoryList {
+  id         String       @id @default(uuid())
+  name       String
+  categoryId String       @map("category_id")
+  category   CategoryList @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([name, categoryId])
+  @@map("subcategory_list")
+}
