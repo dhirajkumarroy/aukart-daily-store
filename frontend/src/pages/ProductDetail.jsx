@@ -4,7 +4,7 @@ import SEO from '../components/SEO';
 import { ChevronRight, Home, ExternalLink, ShieldCheck, RefreshCw, Award, Loader2 } from 'lucide-react';
 import StarRating from '../components/StarRating';
 import { fetchProduct, logProductClick } from '../utils/api';
-import { formatDiscount } from '../utils/formatters';
+import { formatDiscount, formatPrice } from '../utils/formatters';
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -72,11 +72,13 @@ export default function ProductDetail() {
   } = product;
 
   const displayDiscount = formatDiscount(discount);
+  const displayPrice = formatPrice(price);
+  const displayOriginalPrice = formatPrice(originalPrice);
 
   // Calculate savings numerical value for display
-  const rawPrice = parseFloat(price.replace(/[^\d.]/g, ''));
-  const rawOriginal = originalPrice ? parseFloat(originalPrice.replace(/[^\d.]/g, '')) : NaN;
-  const savings = !isNaN(rawPrice) && !isNaN(rawOriginal) ? (rawOriginal - rawPrice) : 0;
+  const rawPrice = parseFloat(String(price).replace(/[^\d.]/g, ''));
+  const rawOriginal = originalPrice ? parseFloat(String(originalPrice).replace(/[^\d.]/g, '')) : NaN;
+  const savings = !isNaN(rawPrice) && !isNaN(rawOriginal) && rawOriginal > rawPrice ? (rawOriginal - rawPrice) : 0;
 
   return (
     <>
@@ -182,9 +184,9 @@ export default function ProductDetail() {
             {/* Price Block */}
             <div className="bg-neutral-50 rounded-2xl p-5 mb-6 border border-neutral-100">
               <div className="flex items-baseline gap-3 mb-1">
-                <span className="text-3xl font-black text-neutral-950">{price}</span>
-                {originalPrice && (
-                  <span className="text-sm text-neutral-400 line-through font-semibold">{originalPrice}</span>
+                <span className="text-3xl font-black text-neutral-950">{displayPrice}</span>
+                {displayOriginalPrice && (
+                  <span className="text-sm text-neutral-400 line-through font-semibold">{displayOriginalPrice}</span>
                 )}
               </div>
               

@@ -2,6 +2,16 @@ import XLSX from 'xlsx';
 import prisma from '../utils/db.js';
 import slugify from '../utils/slugify.js';
 
+// Format price helper (sanitizes corrupted encoding artifacts like â¹ and applies ₹ symbol)
+function formatPrice(val) {
+  if (!val && val !== 0) return null;
+  const numeric = String(val).replace(/[^\d.]/g, '');
+  if (!numeric) return null;
+  const num = parseFloat(numeric);
+  if (isNaN(num)) return null;
+  return `₹${num.toLocaleString('en-IN')}`;
+}
+
 // Calculate discount percentage helper
 function calculateDiscount(currPriceStr, origPriceStr) {
   if (!currPriceStr || !origPriceStr) return null;
@@ -96,8 +106,9 @@ export async function importProductsBulk(req, res, next) {
       const rowNum = index + 2; // Accounting for 1-based header row
 
       const title = String(row.title || row.Title || '').trim();
-      const price = String(row.price || row.Price || '').trim();
-      const originalPrice = String(row.originalPrice || row['Original Price'] || row.original_price || '').trim() || null;
+      const rawPrice = String(row.price || row.Price || '').trim();
+      const price = formatPrice(rawPrice) || rawPrice;
+      const originalPrice = formatPrice(row.originalPrice || row['Original Price'] || row.original_price);
       let discount = String(row.discount || row.Discount || '').trim() || null;
       const category = String(row.category || row.Category || '').trim().toLowerCase();
       const subcategory = String(row.subcategory || row.Subcategory || '').trim().toLowerCase() || null;

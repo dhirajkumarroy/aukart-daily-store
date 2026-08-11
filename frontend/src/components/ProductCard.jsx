@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import StarRating from './StarRating';
-import { formatDiscount } from '../utils/formatters';
+import { formatDiscount, formatPrice } from '../utils/formatters';
 
 export default function ProductCard({ product }) {
   const { slug, title, imageUrl, image, price, originalPrice, discount, rating, reviewCount, category } = product;
   const imgSource = imageUrl || image;
   const displayDiscount = formatDiscount(discount);
+  const displayPrice = formatPrice(price);
+  const displayOriginalPrice = formatPrice(originalPrice);
 
   return (
     <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden card-hover flex flex-col h-full">
@@ -45,8 +47,10 @@ export default function ProductCard({ product }) {
 
         <div className="mt-auto flex items-end justify-between gap-2">
           <div className="flex flex-col">
-            <span className="text-xs text-neutral-400 line-through leading-none font-medium">{originalPrice}</span>
-            <span className="text-xl font-bold text-neutral-900 leading-tight mt-0.5">{price}</span>
+            {displayOriginalPrice && (
+              <span className="text-xs text-neutral-400 line-through leading-none font-medium">{displayOriginalPrice}</span>
+            )}
+            <span className="text-xl font-bold text-neutral-900 leading-tight mt-0.5">{displayPrice}</span>
           </div>
 
           <Link 

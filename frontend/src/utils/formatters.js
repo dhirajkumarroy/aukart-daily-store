@@ -1,4 +1,24 @@
 /**
+ * Formats a raw price string or number into clean Indian Rupee notation (e.g. "₹4,799" or "₹189")
+ * Cleans any CSV encoding corruptions (like â¹), missing symbols, or raw numbers
+ */
+export function formatPrice(priceStr) {
+  if (!priceStr && priceStr !== 0) return '';
+  const str = String(priceStr).trim();
+  if (!str) return '';
+
+  // Extract pure numerical values
+  const numericPart = str.replace(/[^\d.]/g, '');
+  if (!numericPart) return str;
+
+  const num = parseFloat(numericPart);
+  if (isNaN(num)) return str;
+
+  // Format with standard Indian Rupee notation
+  return `₹${num.toLocaleString('en-IN')}`;
+}
+
+/**
  * Formats a raw discount string or number into standard badge format (e.g. "54% off")
  * Handles: "54" -> "54% off", "5" -> "5% off", "50%" -> "50% off", "50% off" -> "50% off"
  */
