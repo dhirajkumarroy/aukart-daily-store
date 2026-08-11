@@ -3,7 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { ChevronRight, Home, ExternalLink, ShieldCheck, RefreshCw, Award, Loader2 } from 'lucide-react';
 import StarRating from '../components/StarRating';
-import { fetchProduct } from '../utils/api';
+import { fetchProduct, logProductClick } from '../utils/api';
+import { formatDiscount } from '../utils/formatters';
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -58,7 +59,19 @@ export default function ProductDetail() {
     );
   }
 
-  const { title, imageUrl, price, originalPrice, discount, rating, reviewCount, category, description } = product;
+  const {
+    title,
+    price,
+    originalPrice,
+    discount,
+    category,
+    imageUrl,
+    description,
+    rating,
+    reviewCount
+  } = product;
+
+  const displayDiscount = formatDiscount(discount);
 
   // Calculate savings numerical value for display
   const rawPrice = parseFloat(price.replace(/[^\d.]/g, ''));
@@ -119,9 +132,9 @@ export default function ProductDetail() {
           {/* Left Column: Image Card */}
           <div className="lg:col-span-6 bg-white rounded-3xl border border-neutral-100 overflow-hidden shadow-sm p-4 sm:p-6">
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-neutral-50 border border-neutral-100/50">
-              {discount && (
+              {displayDiscount && (
                 <span className="absolute top-4 left-4 bg-emerald-500 text-white text-xs font-extrabold px-3 py-1.5 rounded-full z-10 shadow-md">
-                  {discount}
+                  {displayDiscount}
                 </span>
               )}
               <img 
@@ -177,7 +190,7 @@ export default function ProductDetail() {
               
               {savings > 0 && (
                 <p className="text-xs font-semibold text-emerald-600">
-                  You Save: ₹{savings.toLocaleString()} ({discount})
+                  You Save: ₹{savings.toLocaleString()} {displayDiscount ? `(${displayDiscount})` : ''}
                 </p>
               )}
               
@@ -187,15 +200,18 @@ export default function ProductDetail() {
             </div>
 
             {/* Primary CTA */}
-            <Link 
-              to={`/go/${slug}`}
+            <a 
+              href={product.affiliateLink || `/go/${slug}`}
               target="_blank"
               rel="nofollow sponsored noopener"
+              onClick={() => {
+                logProductClick(slug).catch(() => {});
+              }}
               className="inline-flex items-center justify-center gap-2 w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm sm:text-base rounded-2xl transition-all duration-200 shadow-md shadow-emerald-600/10 cursor-pointer text-center"
             >
               Buy on Amazon
               <ExternalLink className="w-4 h-4 sm:w-5 h-5" />
-            </Link>
+            </a>
 
             {/* Quality Seals */}
             <div className="grid grid-cols-2 gap-4 mt-8 border-t border-neutral-100 pt-6">

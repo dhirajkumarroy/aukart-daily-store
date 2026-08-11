@@ -1,17 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import StarRating from './StarRating';
+import { formatDiscount } from '../utils/formatters';
 
 export default function ProductCard({ product }) {
   const { slug, title, imageUrl, image, price, originalPrice, discount, rating, reviewCount, category } = product;
   const imgSource = imageUrl || image;
+  const displayDiscount = formatDiscount(discount);
 
   return (
     <div className="bg-white rounded-2xl border border-neutral-100 overflow-hidden card-hover flex flex-col h-full">
       <Link to={`/product/${slug}`} className="relative aspect-video sm:aspect-square overflow-hidden bg-neutral-50 block">
-        {discount && (
+        {displayDiscount && (
           <span className="absolute top-3 left-3 bg-emerald-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full z-10 shadow-sm">
-            {discount}
+            {displayDiscount}
           </span>
         )}
         <img 

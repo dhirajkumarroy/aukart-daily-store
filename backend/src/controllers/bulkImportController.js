@@ -131,8 +131,14 @@ export async function importProductsBulk(req, res, next) {
         imageUrl = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800';
       }
 
-      // Auto calculate discount if not explicitly provided
-      if (!discount && originalPrice) {
+      // Format or auto calculate discount
+      if (discount) {
+        if (/^\d+$/.test(discount)) {
+          discount = `${discount}% off`;
+        } else if (/^\d+\s*%$/i.test(discount)) {
+          discount = `${discount.replace(/\s*%/g, '')}% off`;
+        }
+      } else if (originalPrice) {
         discount = calculateDiscount(price, originalPrice);
       }
 
