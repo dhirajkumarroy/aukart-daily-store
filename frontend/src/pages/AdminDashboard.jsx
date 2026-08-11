@@ -25,6 +25,7 @@ import {
 
 import Swal from 'sweetalert2';
 import BulkImportModal from '../components/BulkImportModal';
+import { formatPrice } from '../utils/formatters';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -345,7 +346,7 @@ export default function AdminDashboard() {
                               <div className="flex items-center gap-2 mt-0.5">
                                 <span className="text-xs text-neutral-400 font-medium">{product.slug}</span>
                                 {product.price && (
-                                  <span className="text-xs font-semibold text-emerald-700">{product.price}</span>
+                                  <span className="text-xs font-semibold text-emerald-700">{formatPrice(product.price)}</span>
                                 )}
                               </div>
                             </div>
