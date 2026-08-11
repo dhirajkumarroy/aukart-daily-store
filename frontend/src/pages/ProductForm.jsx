@@ -26,7 +26,8 @@ export default function ProductForm() {
     reviewCount: 0,
     featured: false,
     description: '',
-    imageUrl: ''
+    imageUrl: '',
+    imagePublicId: ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -79,7 +80,8 @@ export default function ProductForm() {
           reviewCount: data.reviewCount || 0,
           featured: data.featured || false,
           description: data.description || '',
-          imageUrl: data.imageUrl || ''
+          imageUrl: data.imageUrl || '',
+          imagePublicId: data.imagePublicId || ''
         });
       } catch (err) {
         console.error('Error fetching product details:', err);
@@ -92,12 +94,40 @@ export default function ProductForm() {
     getProductDetails();
   }, [urlSlug, isEditMode, token]);
 
+  const calculateDiscount = (currPriceStr, origPriceStr) => {
+    if (!currPriceStr || !origPriceStr) return '';
+    const current = parseFloat(String(currPriceStr).replace(/[^\d.]/g, ''));
+    const original = parseFloat(String(origPriceStr).replace(/[^\d.]/g, ''));
+    if (original > 0 && current >= 0 && original > current) {
+      const pct = Math.round(((original - current) / original) * 100);
+      return `${pct}% off`;
+    }
+    return '';
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    const finalValue = type === 'checkbox' ? checked : value;
+
+    setFormData(prev => {
+      const updated = {
+        ...prev,
+        [name]: finalValue
+      };
+
+      // Auto calculate discount percentage when price or originalPrice changes
+      if (name === 'price' || name === 'originalPrice') {
+        const autoDiscount = calculateDiscount(
+          name === 'price' ? finalValue : prev.price,
+          name === 'originalPrice' ? finalValue : prev.originalPrice
+        );
+        if (autoDiscount) {
+          updated.discount = autoDiscount;
+        }
+      }
+
+      return updated;
+    });
   };
 
   const handleCategorySelectChange = (e) => {
@@ -121,7 +151,8 @@ export default function ProductForm() {
       const data = await uploadImage(file, token);
       setFormData(prev => ({
         ...prev,
-        imageUrl: data.imageUrl
+        imageUrl: data.imageUrl,
+        imagePublicId: data.publicId || data.imagePublicId || ''
       }));
     } catch (err) {
       console.error('Upload error:', err);
@@ -155,6 +186,7 @@ export default function ProductForm() {
       originalPrice: formData.originalPrice || null,
       discount: formData.discount || null,
       description: formData.description || null,
+      imagePublicId: formData.imagePublicId || null,
       slug: formData.slug || undefined
     };
 

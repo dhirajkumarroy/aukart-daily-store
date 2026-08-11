@@ -20,13 +20,17 @@ model Product {
   subcategory   String?  @map("subcategory")
   affiliateLink String   @map("affiliate_link")
   rating        Float?
-  reviewCount   Int?     @map("review_count")
-  featured      Boolean  @default(false)
-  clickCount    Int      @default(0) @map("click_count")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  reviewCount   Int?      @map("review_count")
+  featured      Boolean   @default(false)
+  imagePublicId String?   @map("image_public_id")
+  isDeleted     Boolean   @default(false) @map("is_deleted")
+  deletedAt     DateTime? @map("deleted_at")
+  clickCount    Int       @default(0) @map("click_count")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
   clicks        Click[]
 
+  @@index([isDeleted])
   @@map("products")
 }
 

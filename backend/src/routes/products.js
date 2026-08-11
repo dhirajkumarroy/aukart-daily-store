@@ -6,7 +6,9 @@ import {
   logClick, 
   createProduct, 
   updateProduct, 
-  deleteProduct 
+  deleteProduct,
+  restoreProduct,
+  hardDeleteProduct
 } from '../controllers/productController.js';
 import authMiddleware from '../middleware/auth.js';
 import { publicLimiter, clickLimiter } from '../middleware/rateLimiter.js';
@@ -22,6 +24,8 @@ router.post('/click/:slug', clickLimiter, logClick);
 // Admin routes (Secured via JWT token authentication)
 router.post('/', authMiddleware, createProduct);
 router.put('/:id', authMiddleware, updateProduct);
+router.put('/:id/restore', authMiddleware, restoreProduct);
+router.delete('/:id/hard', authMiddleware, hardDeleteProduct);
 router.delete('/:id', authMiddleware, deleteProduct);
 
 export default router;

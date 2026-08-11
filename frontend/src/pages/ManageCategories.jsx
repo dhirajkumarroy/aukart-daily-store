@@ -9,6 +9,7 @@ import {
   createMasterSubcategory, 
   deleteMasterSubcategory 
 } from '../utils/api';
+import Swal from 'sweetalert2';
 
 export default function ManageCategories() {
   const navigate = useNavigate();
@@ -92,30 +93,62 @@ export default function ManageCategories() {
   };
 
   const handleDeleteCategory = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete category "${name}"? This will delete all its subcategories!`)) {
-      return;
-    }
+    const result = await Swal.fire({
+      title: 'Delete Category?',
+      text: `Are you sure you want to delete "${name}"? This will delete all its subcategories!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       await deleteMasterCategory(id, token);
       await loadCategories();
+      Swal.fire({
+        title: 'Deleted!',
+        text: `Category "${name}" deleted.`,
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
     } catch (err) {
       console.error('Error deleting category:', err);
-      alert('Failed to delete category.');
+      Swal.fire('Error', 'Failed to delete category.', 'error');
     }
   };
 
   const handleDeleteSubcategory = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete subcategory "${name}"?`)) {
-      return;
-    }
+    const result = await Swal.fire({
+      title: 'Delete Subcategory?',
+      text: `Are you sure you want to delete subcategory "${name}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       await deleteMasterSubcategory(id, token);
       await loadCategories();
+      Swal.fire({
+        title: 'Deleted!',
+        text: `Subcategory "${name}" deleted.`,
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
     } catch (err) {
       console.error('Error deleting subcategory:', err);
-      alert('Failed to delete subcategory.');
+      Swal.fire('Error', 'Failed to delete subcategory.', 'error');
     }
   };
 

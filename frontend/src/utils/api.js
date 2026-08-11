@@ -100,13 +100,48 @@ export async function updateProduct(id, productData, token) {
 }
 
 export async function deleteProduct(id, token) {
+  return softDeleteProduct(id, token);
+}
+
+export async function softDeleteProduct(id, token) {
   const res = await fetch(`${API_URL}/api/products/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`
     }
   });
-  if (!res.ok) throw new Error('Failed to delete product');
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Failed to soft delete product');
+  }
+  return res.json();
+}
+
+export async function restoreProduct(id, token) {
+  const res = await fetch(`${API_URL}/api/products/${id}/restore`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Failed to restore product');
+  }
+  return res.json();
+}
+
+export async function hardDeleteProduct(id, token) {
+  const res = await fetch(`${API_URL}/api/products/${id}/hard`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Failed to permanently delete product and Cloudinary image');
+  }
   return res.json();
 }
 
@@ -123,9 +158,9 @@ export async function uploadImage(file, token) {
   });
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
-    throw new Error(errData.error || 'Failed to upload image file');
+    throw new Error(errData.error || 'Failed to upload image file to Cloudinary');
   }
-  return res.json(); // returns { imageUrl }
+  return res.json(); // returns { imageUrl, publicId }
 }
 
 export async function fetchMasterCategories() {

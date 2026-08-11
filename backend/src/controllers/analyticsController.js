@@ -9,16 +9,23 @@ export async function getAnalytics(req, res, next) {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(now.getDate() - 30);
 
-    // Get all products and their general click fields
+    // Get all products (both active and soft-deleted)
     const products = await prisma.product.findMany({
       select: {
         id: true,
         title: true,
         slug: true,
         category: true,
-        clickCount: true
+        subcategory: true,
+        imageUrl: true,
+        imagePublicId: true,
+        price: true,
+        isDeleted: true,
+        deletedAt: true,
+        clickCount: true,
+        createdAt: true
       },
-      orderBy: { clickCount: 'desc' }
+      orderBy: { createdAt: 'desc' }
     });
 
     // Group and aggregate 7-day clicks
@@ -60,6 +67,13 @@ export async function getAnalytics(req, res, next) {
       title: product.title,
       slug: product.slug,
       category: product.category,
+      subcategory: product.subcategory,
+      imageUrl: product.imageUrl,
+      imagePublicId: product.imagePublicId,
+      price: product.price,
+      isDeleted: product.isDeleted,
+      deletedAt: product.deletedAt,
+      createdAt: product.createdAt,
       totalClicks: product.clickCount,
       clicksLast7Days: sevenDaysMap[product.id] || 0,
       clicksLast30Days: thirtyDaysMap[product.id] || 0
