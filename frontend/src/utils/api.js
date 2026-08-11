@@ -222,3 +222,38 @@ export async function deleteMasterSubcategory(id, token) {
   if (!res.ok) throw new Error('Failed to delete subcategory');
   return res.json();
 }
+
+export async function importProductsBulk(file, token) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const res = await fetch(`${API_URL}/api/products/import`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    },
+    body: formData
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Failed to import spreadsheet');
+  }
+
+  return res.json();
+}
+
+export async function downloadImportTemplate() {
+  const res = await fetch(`${API_URL}/api/products/import/template`);
+  if (!res.ok) throw new Error('Failed to download template');
+  
+  const blob = await res.blob();
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'aukart_products_template.csv';
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+}

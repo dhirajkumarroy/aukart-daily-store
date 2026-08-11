@@ -13,7 +13,8 @@ import {
   AlertTriangle,
   Archive,
   CheckCircle2,
-  Cloud
+  Cloud,
+  FileSpreadsheet
 } from 'lucide-react';
 import { 
   fetchAnalytics, 
@@ -23,6 +24,7 @@ import {
 } from '../utils/api';
 
 import Swal from 'sweetalert2';
+import BulkImportModal from '../components/BulkImportModal';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ export default function AdminDashboard() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('active'); // 'active' | 'trash'
   const [actionLoading, setActionLoading] = useState(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const token = localStorage.getItem('adminToken');
 
   const loadStats = async () => {
@@ -200,6 +203,14 @@ export default function AdminDashboard() {
           </div>
           
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsImportModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white font-semibold text-xs rounded-xl shadow-sm transition-colors cursor-pointer"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+              Import Excel / CSV
+            </button>
+
             <Link 
               to="/admin/product/new"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs rounded-xl shadow-md shadow-emerald-600/10 cursor-pointer transition-colors"
@@ -452,6 +463,17 @@ export default function AdminDashboard() {
           </div>
         )}
       </div>
+
+      {/* Bulk Product Import Modal */}
+      <BulkImportModal
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onSuccess={() => {
+          loadStats();
+          setIsImportModalOpen(false);
+        }}
+        token={token}
+      />
     </>
   );
 }
