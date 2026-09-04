@@ -48,6 +48,7 @@ app.get(['/health', '/api/health'], async (req, res) => {
     res.status(200).json({
       status: 'ok',
       database: 'connected',
+      version: 'v1.1.2-auth-fix',
       timestamp: new Date().toISOString()
     });
   } catch (error) {
