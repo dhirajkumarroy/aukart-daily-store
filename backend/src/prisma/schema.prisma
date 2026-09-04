@@ -62,3 +62,14 @@ model SubcategoryList {
   @@unique([name, categoryId])
   @@map("subcategory_list")
 }
+
+model PriceSegment {
+  id        String   @id @default(uuid())
+  title     String
+  maxPrice  Float    @map("max_price")
+  subtitle  String?
+  badge     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("price_segments")
+}

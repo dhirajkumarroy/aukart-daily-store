@@ -26,7 +26,7 @@ const updateProductSchema = productSchema.partial();
 // 1. GET /api/products (Public) - Only active (non-deleted) products
 export async function getProducts(req, res, next) {
   try {
-    const { category, subcategory, search, featured, includeDeleted } = req.query;
+    const { category, subcategory, search, featured, maxPrice, minPrice, collection, includeDeleted } = req.query;
 
     const where = {};
 
@@ -47,14 +47,51 @@ export async function getProducts(req, res, next) {
       where.title = { contains: search, mode: 'insensitive' };
     }
 
-    if (featured === 'true') {
+    if (featured === 'true' || collection === 'top_deals' || collection === 'featured') {
       where.featured = true;
     }
 
-    const products = await prisma.product.findMany({
+    if (collection === 'top_rated') {
+      where.rating = { gte: 4.0 };
+    }
+
+    // Determine sorting
+    let orderBy = { createdAt: 'desc' };
+    if (collection === 'trending') {
+      orderBy = { clickCount: 'desc' };
+    } else if (collection === 'top_rated') {
+      orderBy = [{ rating: 'desc' }, { reviewCount: 'desc' }];
+    } else if (collection === 'new_arrivals') {
+      orderBy = { createdAt: 'desc' };
+    }
+
+    let products = await prisma.product.findMany({
       where,
-      orderBy: { createdAt: 'desc' }
+      orderBy
     });
+
+    // Support price segment / budget store filtering (e.g. Under ₹99, Under ₹199)
+    if (maxPrice) {
+      const max = parseFloat(maxPrice);
+      if (!isNaN(max)) {
+        products = products.filter(p => {
+          if (!p.price) return false;
+          const num = parseFloat(String(p.price).replace(/[^0-9.]/g, ''));
+          return !isNaN(num) && num <= max;
+        });
+      }
+    }
+
+    if (minPrice) {
+      const min = parseFloat(minPrice);
+      if (!isNaN(min)) {
+        products = products.filter(p => {
+          if (!p.price) return false;
+          const num = parseFloat(String(p.price).replace(/[^0-9.]/g, ''));
+          return !isNaN(num) && num >= min;
+        });
+      }
+    }
 
     res.json(products);
   } catch (error) {

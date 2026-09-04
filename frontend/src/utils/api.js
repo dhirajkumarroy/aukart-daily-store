@@ -1,11 +1,14 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-export async function fetchProducts({ category, subcategory, search, featured } = {}) {
+export async function fetchProducts({ category, subcategory, search, featured, maxPrice, minPrice, collection } = {}) {
   const params = new URLSearchParams();
   if (category) params.append('category', category);
   if (subcategory) params.append('subcategory', subcategory);
   if (search) params.append('search', search);
   if (featured) params.append('featured', featured);
+  if (maxPrice) params.append('maxPrice', maxPrice);
+  if (minPrice) params.append('minPrice', minPrice);
+  if (collection) params.append('collection', collection);
 
   const res = await fetch(`${API_URL}/api/products?${params.toString()}`);
   if (!res.ok) throw new Error('Failed to fetch products');
@@ -257,3 +260,41 @@ export async function downloadImportTemplate() {
   window.URL.revokeObjectURL(url);
   document.body.removeChild(a);
 }
+
+// ==========================================
+// PRICE SEGMENTS / FRAGMENTS API CALLS
+// ==========================================
+
+export async function fetchPriceSegments() {
+  const res = await fetch(`${API_URL}/api/price-segments`);
+  if (!res.ok) throw new Error('Failed to fetch price segments');
+  return res.json();
+}
+
+export async function createPriceSegment(segmentData, token) {
+  const res = await fetch(`${API_URL}/api/price-segments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(segmentData)
+  });
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || 'Failed to create price segment');
+  }
+  return res.json();
+}
+
+export async function deletePriceSegment(id, token) {
+  const res = await fetch(`${API_URL}/api/price-segments/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) throw new Error('Failed to delete price segment');
+  return res.json();
+}
+

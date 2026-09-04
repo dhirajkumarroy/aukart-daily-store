@@ -129,6 +129,22 @@ async function main() {
     console.log(`Created product: ${created.title} [slug: ${created.slug}, category: ${created.category}, subcategory: ${created.subcategory}]`);
   }
 
+  console.log('Seeding deal fragments & price stores...');
+  await prisma.priceSegment.deleteMany({});
+  const initialFragments = [
+    { title: 'Under ₹99', maxPrice: 99, subtitle: 'Pocket Deals', badge: 'STEAL' },
+    { title: 'Top Deals', maxPrice: 0, subtitle: 'Best Price Cuts', badge: 'SAVE BIG' },
+    { title: 'Trending Now', maxPrice: 0, subtitle: 'Most Viewed Today', badge: 'TRENDING' },
+    { title: 'Top Rated', maxPrice: 0, subtitle: '4+ Star Verified Reviews', badge: 'BESTSELLER' }
+  ];
+
+  for (const frag of initialFragments) {
+    await prisma.priceSegment.create({
+      data: frag
+    });
+    console.log(`Created fragment: ${frag.title}`);
+  }
+
   console.log('Database seeding successfully finished.');
 }
 
@@ -140,3 +156,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+

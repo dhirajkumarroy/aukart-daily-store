@@ -11,6 +11,7 @@ export default function Category({ categories }) {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const searchQuery = queryParams.get('q') || '';
+  const maxPriceParam = queryParams.get('maxPrice') || null;
 
   const activeCategory = categorySlug ? categorySlug.toLowerCase() : 'all';
   const categoryDisplayName = activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1);
@@ -26,7 +27,11 @@ export default function Category({ categories }) {
       setError(null);
       setSelectedSubcategory('all'); // Reset subcategory when main category changes
       try {
-        const data = await fetchProducts({ category: activeCategory, search: searchQuery });
+        const data = await fetchProducts({ 
+          category: activeCategory, 
+          search: searchQuery,
+          maxPrice: maxPriceParam 
+        });
         setProducts(data);
       } catch (err) {
         console.error('Error fetching products by category:', err);
@@ -36,7 +41,7 @@ export default function Category({ categories }) {
       }
     }
     loadData();
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, searchQuery, maxPriceParam]);
 
   // Read subcategories from master category configuration
   const currentCategoryObj = categories.find(c => c.name.toLowerCase() === activeCategory.toLowerCase());

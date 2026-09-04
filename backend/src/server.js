@@ -6,7 +6,9 @@ import productRoutes from './routes/products.js';
 import uploadRoutes from './routes/upload.js';
 import analyticsRoutes from './routes/analytics.js';
 import categoryRoutes from './routes/categories.js';
+import priceSegmentRoutes from './routes/priceSegments.js';
 import errorHandler from './middleware/errorHandler.js';
+import prisma from './utils/db.js';
 
 dotenv.config();
 
@@ -34,22 +36,48 @@ app.use(cors({
 // Express JSON body parser
 app.use(express.json());
 
+// Base route for connectivity check
+app.get('/', (req, res) => {
+  res.json({ message: 'Affiliate Product Store API is running.' });
+});
+
+// Dedicated health check endpoint (queries DB to keep connection & Supabase active)
+app.get(['/health', '/api/health'], async (req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.status(200).json({
+      status: 'ok',
+      database: 'connected',
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'degraded',
+      database: 'disconnected',
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Bind API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/categories', categoryRoutes);
-
-// Base route for connectivity check
-app.get('/', (req, res) => {
-  res.json({ message: 'Affiliate Product Store API is running.' });
-});
+app.use('/api/price-segments', priceSegmentRoutes);
 
 // Global Error Handler Middleware (must be registered last)
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Express Server is booting...`);
   console.log(`API running on http://localhost:${PORT}`);
+  try {
+    await prisma.$connect();
+    console.log('Database connected & warm.');
+  } catch (error) {
+    console.error('Initial database connection warning:', error.message);
+  }
 });
