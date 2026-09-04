@@ -20,6 +20,10 @@ const DEFAULT_SEGMENTS = [
 // 1. GET /api/price-segments (Public)
 export async function getPriceSegments(req, res, next) {
   try {
+    if (!prisma.priceSegment) {
+      return res.json(DEFAULT_SEGMENTS);
+    }
+
     let segments = await prisma.priceSegment.findMany({
       orderBy: { createdAt: 'asc' }
     });
@@ -34,16 +38,17 @@ export async function getPriceSegments(req, res, next) {
             subtitle: seg.subtitle,
             badge: seg.badge
           }
-        });
+        }).catch(() => {});
       }
       segments = await prisma.priceSegment.findMany({
         orderBy: { createdAt: 'asc' }
-      });
+      }).catch(() => DEFAULT_SEGMENTS);
     }
 
     res.json(segments);
   } catch (err) {
-    next(err);
+    console.error('Price segments query warning:', err.message);
+    res.json(DEFAULT_SEGMENTS);
   }
 }
 

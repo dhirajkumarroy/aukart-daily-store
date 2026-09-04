@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "build": "prisma generate --schema=src/prisma/schema.prisma",
+    "postinstall": "prisma generate --schema=src/prisma/schema.prisma",
     "prisma:generate": "prisma generate --schema=src/prisma/schema.prisma",
     "prisma:migrate": "prisma migrate dev --schema=src/prisma/schema.prisma",
     "prisma:seed": "node src/prisma/seed.js"
@@ -21,12 +23,12 @@
     "express-rate-limit": "^7.1.5",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
+    "prisma": "^5.10.2",
     "xlsx": "^0.18.5",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0",
-    "prisma": "^5.10.2"
+    "nodemon": "^3.1.0"
   },
   "prisma": {
     "seed": "node src/prisma/seed.js"
